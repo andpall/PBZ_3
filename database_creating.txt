@@ -1,0 +1,32 @@
+//Получить всю информацию о танках
+$ match(n:tank) return n.name, n.country, n.year, n.weight, n.caliber
+
+/Получить название танков СССР
+$ match(n:tank) where n.country = 'СССР' return n.name
+
+//Получить пары названий танков, между которыми отношение «союзник»
+$ match(n)-[:ally]->(m) return n.name, m.name
+
+//Получить название и калибр орудия танков семейства тигров
+$ match(n) where n.name starts with "Tiger" return n.name, n.caliber
+
+//Получить количество танков по типу
+$ match(n:subclass)-[:example]->(m) return n.name, count(m)
+
+//Отсортировать танки по массе
+$ match(n:tank) return n.name, n.wight order by m.weight desc
+
+//Получить информацию о танках, у которых масса меньше 40т
+$ match(n:tank) where n.weight<40 return n.name, n.weight
+
+//Получить средний калибр тяжелых танков Германии
+$ match(n:tank) where n.counrty = "Германия" return avg(n.caliber) as средний_калибр
+
+//Получить название и массу танков, которые выпускались в промежутке 1937-1942
+$ match (n:tank) where n.year > 1937 and n.year < 1942 return n.name, n.weight
+
+//Получить название типов танков, у которых количество примеров больше, чем у средних  танков
+$ match (n:subclass)-[:example]->(m:tank) with n, count(m) as cm
+$ match (a:subclass)-[:example]->(b:tank) where a.name = 'средний танк' with n, 
+cm > count(b) as cb where cb = true
+return n.name
